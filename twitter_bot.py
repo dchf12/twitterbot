@@ -1,5 +1,9 @@
-import tweepy
 import json
+import time
+
+import tweepy
+
+SEARCH_NUM = 3
 
 
 class Bot:
@@ -14,13 +18,10 @@ class Bot:
 
 
 class TwitterBot(Bot):
-    """
-    Bot to tweet automatically
-    """
+    """Bot to tweet automatically"""
 
     def __init__(self, *args):
         super().__init__(*args)
-        # APIインスタンスを作成
         self.auth = tweepy.OAuthHandler(
             self.API_KEY,
             self.API_SECRET_KEY,
@@ -29,9 +30,45 @@ class TwitterBot(Bot):
         self.api = tweepy.API(self.auth)
 
     def post(self, text):
-        """
-        Post a message on Twitter
+        """Post a message on Twitter
+
+        Args:
+            text: Content to tweet
         """
         tw = tweepy.API(self.auth)
-        # twitterへメッセージを投稿する
         tw.update_status(status=text)
+
+    def search_keyword(self):
+        """Enter an account, topic, or keyword to search"""
+        query = "(本 AND 好き) OR (book AND love)"
+        tweet_items = tweepy.Cursor(
+            self.api.search,
+            q=query,
+            tweet_mode="extended",
+            result_type="mixed",
+        ).items(SEARCH_NUM)
+
+        return tweet_items
+
+    def follow(self):
+        """follow user account"""
+
+        tweet_items = self.search_keyword()
+
+        for tweet in tweet_items:
+            try:
+                # self.api.create_friendship(tweet.user.screen_name)
+                print(tweet.user.screen_name)
+                # print(tweet.full_text)
+            except Exception as e:
+                print(e)
+            time.sleep(1)
+
+    def follow_back(self):
+        """Return follow if followed"""
+        for follower in tweepy.Cursor(self.api.followers).items():
+            try:
+                follower.follow()
+            except Exception as e:
+                print(e)
+            time.sleep(1)
