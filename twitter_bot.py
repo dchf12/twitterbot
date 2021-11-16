@@ -1,14 +1,13 @@
 import json
 import time
-
 import tweepy
 
-SEARCH_NUM = 3
+SEARCH_NUM = 10
 
 
 class Bot:
     def __init__(self):
-        with open("./key_token.json", "r") as jf:
+        with open(r"./key_token.json", "r") as jf:
             load = json.load(jf)
             self.API_KEY = load["API_KEY"]
             self.API_SECRET_KEY = load["API_SECRET_KEY"]
@@ -40,7 +39,7 @@ class TwitterBot(Bot):
 
     def search_keyword(self):
         """Enter an account, topic, or keyword to search"""
-        query = "(本 AND 好き) OR (book AND love)"
+        query = "(漫画好き OR 本好き)"
         tweet_items = tweepy.Cursor(
             self.api.search,
             q=query,
@@ -57,12 +56,12 @@ class TwitterBot(Bot):
 
         for tweet in tweet_items:
             try:
-                # self.api.create_friendship(tweet.user.screen_name)
+                self.api.create_friendship(tweet.user.screen_name)
                 print(tweet.user.screen_name)
                 # print(tweet.full_text)
+                time.sleep(3)
             except Exception as e:
                 print(e)
-            time.sleep(1)
 
     def follow_back(self):
         """Return follow if followed"""
@@ -71,4 +70,4 @@ class TwitterBot(Bot):
                 follower.follow()
             except Exception as e:
                 print(e)
-            time.sleep(1)
+            time.sleep(3)
