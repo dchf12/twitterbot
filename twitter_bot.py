@@ -39,7 +39,7 @@ class TwitterBot(Bot):
 
     def search_keyword(self):
         """Enter an account, topic, or keyword to search"""
-        query = "(漫画好き OR 本好き)"
+        query = "(漫画)"
         tweet_items = tweepy.Cursor(
             self.api.search,
             q=query,
